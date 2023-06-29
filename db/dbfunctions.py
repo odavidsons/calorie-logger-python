@@ -35,6 +35,7 @@ class dbfunctions():
             return list
         except: print("Error getting date list")
 
+    #Return the id of a date
     def getDateId(self,day,month,year):
         query = f"SELECT id FROM dates WHERE day = '{day}' AND month = '{month}' AND year = '{year}';"
         try:
@@ -73,6 +74,16 @@ class dbfunctions():
             self.cursor.execute(query,values)
             self.conn.commit()
             print(f"Inserted food: {date_id},{name},{calories}")
+        except:
+            self.conn.rollback()
+
+    #Delete a food entry in a date
+    def deleteFood(self,date_id,name,calories):
+        query = f"DELETE FROM foods WHERE date_id = '{date_id}' AND name = '{name}' AND calories = '{calories}';"
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            print(f"Deleted food: {date_id},{name},{calories}")
         except:
             self.conn.rollback()
 
