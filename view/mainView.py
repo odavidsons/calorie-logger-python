@@ -3,6 +3,8 @@ import datetime
 from tkinter import messagebox as msg
 from tkinter.ttk import Treeview
 from tkinter import END
+from view.settings import settings
+from view.export import export
 
 class mainView(ctk.CTkFrame):
 
@@ -15,13 +17,15 @@ class mainView(ctk.CTkFrame):
         optionsFrame = ctk.CTkFrame(self)
         optionsFrame.grid(row=0,column=0,columnspan=3,sticky="nsew")
         labelTitle = ctk.CTkLabel(optionsFrame,text="Calorie logger",font=self.fontLarge)
-        labelTitle.grid(row=0,column=0,columnspan=3,pady=15)
-        self.btnExport = ctk.CTkButton(optionsFrame,text="Export",font=self.fontMedium)
+        labelTitle.grid(row=0,column=0,columnspan=4,pady=15)
+        self.btnExport = ctk.CTkButton(optionsFrame,text="Export",font=self.fontMedium,command=lambda: export(master))
         self.btnExport.grid(row=1,column=0,padx=20,pady=10)
-        self.btnSettings = ctk.CTkButton(optionsFrame,text="Settings",font=self.fontMedium)
+        self.btnSettings = ctk.CTkButton(optionsFrame,text="Settings",font=self.fontMedium,command=lambda: settings(master))
         self.btnSettings.grid(row=1,column=1,padx=20,pady=10)
-        self.btnToggleMode = ctk.CTkButton(optionsFrame,text="Light mode",font=self.fontMedium)
+        self.btnToggleMode = ctk.CTkButton(optionsFrame,text="Toggle Theme",font=self.fontMedium,command=self.master.toggleUIMode)
         self.btnToggleMode.grid(row=1,column=2,padx=20,pady=10)
+        self.btnExit = ctk.CTkButton(optionsFrame,text="Exit",font=self.fontMedium,command=self.master.quit)
+        self.btnExit.grid(row=1,column=3,padx=20,pady=10)
         self.master.make_dynamic(optionsFrame)
 
         self.leftFrame = ctk.CTkFrame(self)
@@ -32,9 +36,9 @@ class mainView(ctk.CTkFrame):
         self.labelCurrentDate = ctk.CTkLabel(self.leftFrame,text=f"{self.today.day}/{self.today.month}/{self.today.year}")
         self.labelCurrentDate.grid(row=0,column=1,padx=5)
         self.btnAddDate = ctk.CTkButton(self.leftFrame,text="Register today",command=self.addDate)
-        self.btnAddDate.grid(row=0,column=2,padx=5)
+        self.btnAddDate.grid(row=0,column=2,padx=5,pady=5)
         self.dateListFrame = ctk.CTkScrollableFrame(self.leftFrame)
-        self.dateListFrame.grid(row=1,column=0,columnspan=3,padx=10,sticky="nsew")
+        self.dateListFrame.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
 
         centerFrame = ctk.CTkFrame(self)
         centerFrame.grid(row=1,column=1,padx=10,pady=15)
@@ -59,8 +63,10 @@ class mainView(ctk.CTkFrame):
         labelDate1.grid(row=0,column=0,padx=5)
         self.labelDateSelected = ctk.CTkLabel(rightFrame,text="")
         self.labelDateSelected.grid(row=0,column=1,padx=5)
+        self.btnClearList = ctk.CTkButton(rightFrame,text="Clear Selection",command=self.clearList)
+        self.btnClearList.grid(row=0,column=2,padx=5,pady=5)
         self.foodListTree = Treeview(rightFrame,columns=("date_id","name","calories"),show='headings')
-        self.foodListTree.grid(row=1,column=0,columnspan=3,padx=10,sticky="nsew")
+        self.foodListTree.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
         self.foodListTree.heading("name",text="Food")
         self.foodListTree.heading("calories",text="Calories")
         self.foodListTree["displaycolumns"]=("name", "calories")
@@ -86,9 +92,9 @@ class mainView(ctk.CTkFrame):
         for result in datelist:
             date = f"{result[1]}/{result[2]}/{result[3]}"
             label = ctk.CTkLabel(self.dateListFrame,text=date)
-            label.grid(row=row,column=0,padx=5)
+            label.grid(row=row,column=0,padx=5,pady=5)
             btn = ctk.CTkButton(self.dateListFrame,text=f"Select",command=self.fillFoodList)
-            btn.grid(row=row,column=1,padx=5)
+            btn.grid(row=row,column=1,padx=5,pady=5)
             row = row + 1
 
 
@@ -131,5 +137,15 @@ class mainView(ctk.CTkFrame):
                     self.master.db.deleteFood(values[0],values[1],values[2])
                     self.foodListTree.delete(food)
                 except: print("Error in deleting food from DB")
-        else:
-            self.labelMessage.configure(text="Select a food to remove on the list.")
+        else: self.displayLabelMessage("Select a food on the list to remove")
+
+    #Cler the current selection
+    def clearList(self):
+        self.labelDateSelected.configure(text="")
+        self.foodListTree.delete(*self.foodListTree.get_children()) #Clear the list
+        self.labelTotalCalories.configure(text="")
+
+    #Show a small label message on the center frame
+    def displayLabelMessage(self,message):
+        self.labelMessage.configure(text=message)
+        #self.after(2000,self.labelMessage.configure(text=""))

@@ -4,9 +4,11 @@ from db.dbfunctions import dbfunctions
 
 class calorieLogger(ctk.CTk):
 
+    UIMode = "dark"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode(self.UIMode)
         ctk.set_default_color_theme("blue")
         self.resizable(True,True)
         self.mainFrame = mainView(self) #Render main app widgets
@@ -31,3 +33,11 @@ class calorieLogger(ctk.CTk):
 
         for i in range(col_count):
             window.grid_columnconfigure(i, weight=1)
+
+    def toggleUIMode(self):
+        if self.UIMode == "dark":
+            self.UIMode = "light"
+            ctk.set_appearance_mode(self.UIMode)
+        else:
+            self.UIMode = "dark"
+            ctk.set_appearance_mode(self.UIMode)
