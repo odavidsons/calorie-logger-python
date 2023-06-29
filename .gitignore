@@ -3,3 +3,5 @@ main.spec
 __pycache__
 db/__pycache__
 view/__pycache__
+calorieloggerDB
+dist/calorieloggerDB
