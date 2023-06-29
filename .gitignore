@@ -1,0 +1,5 @@
+build
+main.spec
+__pycache__
+db/__pycache__
+view/__pycache__
