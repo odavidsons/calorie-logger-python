@@ -7,7 +7,7 @@ class calorieLogger(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("green")
+        ctk.set_default_color_theme("blue")
         self.resizable(True,True)
         self.mainFrame = mainView(self) #Render main app widgets
         self.mainFrame.grid()
