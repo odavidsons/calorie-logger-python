@@ -1,3 +1,10 @@
+"""
+Author: David Santos
+Repository: https://github.com/odavidsons/calorie-logger-python
+Year: 2023
+
+File imported by calorieLogger.py. Renders all of the widgets belonging to the main app frame. Also has the controller functions for the main frame.
+"""
 import customtkinter as ctk
 import datetime
 from tkinter import messagebox as msg
@@ -14,6 +21,7 @@ class mainView(ctk.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
 
+        #Top menu frame
         optionsFrame = ctk.CTkFrame(self)
         optionsFrame.grid(row=0,column=0,columnspan=3,sticky="nsew")
         labelTitle = ctk.CTkLabel(optionsFrame,text="Calorie logger",font=self.fontLarge)
@@ -28,6 +36,7 @@ class mainView(ctk.CTkFrame):
         self.btnExit.grid(row=1,column=3,padx=20,pady=10)
         self.master.make_dynamic(optionsFrame)
 
+        #Left list frame
         self.leftFrame = ctk.CTkFrame(self)
         self.leftFrame.grid(row=1,column=0,padx=10,pady=15)
         self.today = datetime.date.today()
@@ -40,6 +49,7 @@ class mainView(ctk.CTkFrame):
         self.dateListFrame = ctk.CTkScrollableFrame(self.leftFrame)
         self.dateListFrame.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
 
+        #Center options frame
         centerFrame = ctk.CTkFrame(self)
         centerFrame.grid(row=1,column=1,padx=10,pady=15)
         label1 = ctk.CTkLabel(centerFrame,text="Food name:",font=self.fontMedium)
@@ -57,6 +67,7 @@ class mainView(ctk.CTkFrame):
         self.labelMessage = ctk.CTkLabel(centerFrame,text="")
         self.labelMessage.grid(row=4,columnspan=2,pady=5)
 
+        #Right list frame
         rightFrame = ctk.CTkFrame(self)
         rightFrame.grid(row=1,column=2,padx=10,pady=15)
         labelDate1 = ctk.CTkLabel(rightFrame,text="Date:")

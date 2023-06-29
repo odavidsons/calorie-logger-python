@@ -1,3 +1,10 @@
+"""
+Author: David Santos
+Repository: https://github.com/odavidsons/calorie-logger-python
+Year: 2023
+
+File imported by calorieLogger.py. Contains all of the database creation and querying functions.
+"""
 import sqlite3
 
 class dbfunctions():
@@ -7,7 +14,7 @@ class dbfunctions():
 
     def __init__(self):
         try:
-            self.conn = sqlite3.connect("calorielogger")
+            self.conn = sqlite3.connect("calorieloggerDB")
             self.cursor = self.conn.cursor()
             self.initializeTables()
         except: print("There was an error starting the database connection.")

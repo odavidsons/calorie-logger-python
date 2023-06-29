@@ -1,3 +1,10 @@
+"""
+Author: David Santos
+Repository: https://github.com/odavidsons/calorie-logger-python
+Year: 2023
+
+File imported by main.py. Creates the main view object and handles app initialization.
+"""
 import customtkinter as ctk
 from view.mainView import mainView
 from db.dbfunctions import dbfunctions
@@ -9,7 +16,6 @@ class calorieLogger(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ctk.set_appearance_mode(self.UIMode)
-        ctk.set_default_color_theme("blue")
         self.resizable(True,True)
         self.mainFrame = mainView(self) #Render main app widgets
         self.mainFrame.grid()
