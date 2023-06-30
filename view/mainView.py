@@ -165,11 +165,20 @@ class mainView(ctk.CTkFrame):
         foodlist = self.master.db.getFoodsByDateId(self.today.day,self.today.month,self.today.year)
         row = 0
         calories = 0
+        carbs = 0
+        proteins = 0
+        fats = 0
         for result in foodlist:
             self.foodListTree.insert('',END,values=(result[1],result[2],result[3],result[4],result[5],result[6]))
             row = row + 1
             calories = calories + result[3]
-        self.labelTotalCalories.configure(text=calories)
+            carbs = carbs + result[4]
+            proteins = proteins + result[5]
+            fats = fats + result[6]
+        self.labelTotalCalories.configure(text=f"{calories} Kcal")
+        self.labelTotalCarbs.configure(text=f"{carbs} g")
+        self.labelTotalProteins.configure(text=f"{proteins} g")
+        self.labelTotalFats.configure(text=f"{fats} g")
 
     #Handle insertion for a date entry
     def addDate(self):
@@ -216,6 +225,9 @@ class mainView(ctk.CTkFrame):
         self.labelDateSelected.configure(text="")
         self.foodListTree.delete(*self.foodListTree.get_children()) #Clear the list
         self.labelTotalCalories.configure(text="")
+        self.labelTotalCarbs.configure(text="")
+        self.labelTotalProteins.configure(text="")
+        self.labelTotalFats.configure(text="")
 
     #Show a small label message on the center frame
     def displayLabelMessage(self,message):
