@@ -7,6 +7,7 @@ File imported by mainView.py. Renders all of the widgets belonging to the export
 """
 import customtkinter as ctk
 import json
+import yaml
 from customtkinter import filedialog as fd
 from os import getcwdb
 
@@ -16,7 +17,7 @@ class export(ctk.CTkToplevel):
         super().__init__(master)
         self.title("Export")
         self.format = ctk.StringVar(value="Choose..")
-        self.format_list = ["JSON","CSV"]
+        self.format_list = ["JSON","YAML","CSV"]
         labelFormat = ctk.CTkLabel(self,text="Select format:")
         labelFormat.grid(row=0,column=0,padx=10,pady=20)
         selectFormat = ctk.CTkOptionMenu(self,values=self.format_list,variable=self.format)
@@ -46,7 +47,10 @@ class export(ctk.CTkToplevel):
         data= {"dates": []}
         query_dates = self.master.db.getDates()
         for date in query_dates:
-            foods_list = self.master.db.getFoodsByDateId(date[1],date[2],date[3])
+            query_foods = self.master.db.getFoodsByDateId(date[1],date[2],date[3])
+            foods_list = []
+            for food in query_foods:
+                foods_list.append({"name": food[2],"calories":food[3]})
             data["dates"].append({"day":date[1],"month":date[2],"year":date[3],"foods":foods_list})
 
         if format == "JSON":
@@ -58,5 +62,19 @@ class export(ctk.CTkToplevel):
                     outfile.write(json_data)
                 self.labelMessage.configure(text=f"Data exported!\n{filename}")
             except: pass
+        elif format == "YAML":
+            file_types = (('YAML files', '*.yaml'),('All files', '*.*'))
+            try:
+                filename = fd.asksaveasfilename(title="Choose export location",filetypes=file_types,initialdir=getcwdb())
+                with open(filename,"w") as outfile:
+                    yaml.dump(data,outfile,indent=4)
+                self.labelMessage.configure(text=f"Data exported!\n{filename}")
+            except: pass
         elif format == "CSV":
-            print(format)
+            file_types = (('CSV files', '*.csv'),('All files', '*.*'))
+            try:
+                filename = fd.asksaveasfilename(title="Choose export location",filetypes=file_types,initialdir=getcwdb())
+                with open(filename,"w") as outfile:
+                    pass
+                self.labelMessage.configure(text=f"Data exported!\n{filename}")
+            except: pass
