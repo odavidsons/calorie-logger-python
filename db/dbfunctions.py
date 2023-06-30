@@ -27,7 +27,7 @@ class dbfunctions():
             self.conn.commit()
         except: self.conn.rollback()
 
-        query = "CREATE TABLE foods (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_id INTEGER NOT NULL, name TEXT NOT NULL, calories REAL NOT NULL, CONSTRAINT fk_date_id FOREIGN KEY (date_id) REFERENCES dates (id) ON DELETE CASCADE);"
+        query = "CREATE TABLE foods (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_id INTEGER NOT NULL, name TEXT NOT NULL, calories REAL NOT NULL, carbs REAL NOT NULL DEFAULT 0, proteins REAL NOT NULL DEFAULT 0, fats REAL NOT NULL DEFAULT 0, CONSTRAINT fk_date_id FOREIGN KEY (date_id) REFERENCES dates (id) ON DELETE CASCADE);"
         try:
             self.cursor.execute(query)
             self.conn.commit()
@@ -73,14 +73,14 @@ class dbfunctions():
             self.conn.rollback()
 
     #Insert a new food entry for a date
-    def insertFood(self,day,month,year,name,calories):
+    def insertFood(self,day,month,year,name,calories,carbs,proteins,fats):
         date_id = self.getDateId(day,month,year)
-        values = [date_id[0],name,calories]
-        query = "INSERT INTO foods (date_id,name,calories) VALUES (?,?,?);"
+        values = [date_id[0],name,calories,carbs,proteins,fats]
+        query = "INSERT INTO foods (date_id,name,calories,carbs,proteins,fats) VALUES (?,?,?,?,?,?);"
         try:
             self.cursor.execute(query,values)
             self.conn.commit()
-            print(f"Inserted food: {date_id},{name},{calories}")
+            print(f"Inserted food: {date_id},{name},{calories},{carbs},{proteins},{fats}")
         except:
             self.conn.rollback()
 
@@ -95,8 +95,8 @@ class dbfunctions():
             self.conn.rollback()
 
     #Delete a food entry in a date
-    def deleteFood(self,date_id,name,calories):
-        query = f"DELETE FROM foods WHERE date_id = '{date_id}' AND name = '{name}' AND calories = '{calories}';"
+    def deleteFood(self,date_id,name,calories,carbs,proteins,fats):
+        query = f"DELETE FROM foods WHERE date_id = '{date_id}' AND name = '{name}' AND calories = '{calories}' AND carbs = '{carbs}' AND proteins = '{proteins}' AND fats = '{fats}';"
         try:
             self.cursor.execute(query)
             self.conn.commit()

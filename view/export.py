@@ -41,7 +41,10 @@ class export(ctk.CTkToplevel):
                 "foods": [
                     {
                         "name": "food example",
-                        "calories": value
+                        "calories": value,
+                        "carbs": value,
+                        "proteins": value,
+                        "fats": value
                     }
                 ]
             }
@@ -53,7 +56,7 @@ class export(ctk.CTkToplevel):
             query_foods = self.master.db.getFoodsByDateId(date[1],date[2],date[3])
             foods_list = []
             for food in query_foods:
-                foods_list.append({"name": food[2],"calories":food[3]})
+                foods_list.append({"name": food[2],"calories": food[3],"carbs": food[4],"proteins": food[5],"fats": food[6]})
             data["dates"].append({"day":date[1],"month":date[2],"year":date[3],"foods":foods_list})
 
         if format == "JSON":

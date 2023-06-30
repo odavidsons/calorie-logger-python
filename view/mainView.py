@@ -10,6 +10,7 @@ import datetime
 from tkinter import messagebox as msg
 from tkinter.ttk import Treeview
 from tkinter import END
+#Import app views
 from view.settings import settings
 from view.export import export
 
@@ -38,7 +39,7 @@ class mainView(ctk.CTkFrame):
 
         #Left list frame
         self.leftFrame = ctk.CTkFrame(self)
-        self.leftFrame.grid(row=1,column=0,padx=10,pady=15)
+        self.leftFrame.grid(row=1,column=0,padx=10,pady=15,sticky="ns")
         self.today = datetime.date.today()
         labelDate = ctk.CTkLabel(self.leftFrame,text="Date:")
         labelDate.grid(row=0,column=0,padx=5)
@@ -60,12 +61,24 @@ class mainView(ctk.CTkFrame):
         label2.grid(row=1,column=0,padx=5,pady=5)
         self.inputCalories = ctk.CTkEntry(centerFrame,font=self.fontMedium)
         self.inputCalories.grid(row=1,column=1,padx=5,pady=5)
+        label3 = ctk.CTkLabel(centerFrame,text="Carbs:",font=self.fontMedium)
+        label3.grid(row=2,column=0,padx=5,pady=5)
+        self.inputCarbs = ctk.CTkEntry(centerFrame,font=self.fontMedium)
+        self.inputCarbs.grid(row=2,column=1,padx=5,pady=5)
+        label4 = ctk.CTkLabel(centerFrame,text="Proteins:",font=self.fontMedium)
+        label4.grid(row=3,column=0,padx=5,pady=5)
+        self.inputProteins = ctk.CTkEntry(centerFrame,font=self.fontMedium)
+        self.inputProteins.grid(row=3,column=1,padx=5,pady=5)
+        label5 = ctk.CTkLabel(centerFrame,text="Fats:",font=self.fontMedium)
+        label5.grid(row=4,column=0,padx=5,pady=5)
+        self.inputFats = ctk.CTkEntry(centerFrame,font=self.fontMedium)
+        self.inputFats.grid(row=4,column=1,padx=5,pady=5)
         btnAdd = ctk.CTkButton(centerFrame,text=">> Add >>",font=self.fontMedium,command=self.addFood)
-        btnAdd.grid(row=2,columnspan=2,padx=15,pady=5)
+        btnAdd.grid(row=5,columnspan=2,padx=15,pady=5)
         self.btnRemove = ctk.CTkButton(centerFrame,text="<< Remove <<",font=self.fontMedium,fg_color="#c21717",hover_color="#9e1919",command=self.removeFood)
-        self.btnRemove.grid(row=3,columnspan=2,padx=15,pady=5)
+        self.btnRemove.grid(row=6,columnspan=2,padx=15,pady=5)
         self.labelMessage = ctk.CTkLabel(centerFrame,text="")
-        self.labelMessage.grid(row=4,columnspan=2,pady=5)
+        self.labelMessage.grid(row=7,columnspan=2,pady=5)
 
         #Right list frame
         rightFrame = ctk.CTkFrame(self)
@@ -76,18 +89,46 @@ class mainView(ctk.CTkFrame):
         self.labelDateSelected.grid(row=0,column=1,padx=5)
         self.btnclearSelection = ctk.CTkButton(rightFrame,text="Clear Selection",command=self.clearSelection)
         self.btnclearSelection.grid(row=0,column=2,padx=5,pady=5)
-        self.foodListTree = Treeview(rightFrame,columns=("date_id","name","calories"),show='headings')
+        self.foodListTree = Treeview(rightFrame,columns=("date_id","name","calories","carbs","proteins","fats"),show='headings')
         self.foodListTree.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
         self.foodListTree.heading("name",text="Food")
+        self.foodListTree.column("name", minwidth=80, width=80, stretch=ctk.YES)
         self.foodListTree.heading("calories",text="Calories")
-        self.foodListTree["displaycolumns"]=("name", "calories")
-        labelTotal = ctk.CTkLabel(rightFrame,text="Total calories:")
-        labelTotal.grid(row=2,column=0)
-        self.labelTotalCalories = ctk.CTkLabel(rightFrame,text="")
-        self.labelTotalCalories.grid(row=2,column=1)
+        self.foodListTree.column("calories", minwidth=80, width=80, stretch=ctk.YES)
+        self.foodListTree.heading("carbs",text="Carbs")
+        self.foodListTree.column("carbs", minwidth=80, width=80, stretch=ctk.YES)
+        self.foodListTree.heading("proteins",text="Proteins")
+        self.foodListTree.column("proteins", minwidth=80, width=80, stretch=ctk.YES)
+        self.foodListTree.heading("fats",text="Fats")
+        self.foodListTree.column("fats", minwidth=80, width=80, stretch=ctk.YES)
+        self.foodListTree["displaycolumns"]=("name", "calories","carbs","proteins","fats")
+
+        self.selectedStatsFrame = ctk.CTkFrame(rightFrame)
+        self.selectedStatsFrame.grid(row=2,columnspan=3,padx=10,pady=5,sticky="ew")
+        labelTitle1 = ctk.CTkLabel(self.selectedStatsFrame,text="Total Macros",font=self.fontMedium)
+        labelTitle1.grid(row=0,columnspan=4,padx=5)
+        labelTotal = ctk.CTkLabel(self.selectedStatsFrame,text="Calories")
+        labelTotal.grid(row=1,column=0,padx=5)
+        labelCarbs = ctk.CTkLabel(self.selectedStatsFrame,text="Carbs")
+        labelCarbs.grid(row=1,column=1,padx=5)
+        labelProteins = ctk.CTkLabel(self.selectedStatsFrame,text="Protein")
+        labelProteins.grid(row=1,column=2,padx=5)
+        labelFats = ctk.CTkLabel(self.selectedStatsFrame,text="Fats")
+        labelFats.grid(row=1,column=3,padx=5)
+        self.labelTotalCalories = ctk.CTkLabel(self.selectedStatsFrame,text="")
+        self.labelTotalCalories.grid(row=2,column=0,padx=5)
+        self.labelTotalCarbs = ctk.CTkLabel(self.selectedStatsFrame,text="")
+        self.labelTotalCarbs.grid(row=2,column=1,padx=5)
+        self.labelTotalProteins = ctk.CTkLabel(self.selectedStatsFrame,text="")
+        self.labelTotalProteins.grid(row=2,column=2,padx=5)
+        self.labelTotalFats = ctk.CTkLabel(self.selectedStatsFrame,text="")
+        self.labelTotalFats.grid(row=2,column=3,padx=5)
+        btnChart = ctk.CTkButton(self.selectedStatsFrame,text="View chart")
+        btnChart.grid(row=3,columnspan=4,padx=10,pady=10)
+        self.master.make_dynamic(self.selectedStatsFrame)
 
         footerFrame = ctk.CTkFrame(self)
-        footerFrame.grid(row=2,column=0,columnspan=3,sticky="ew")
+        footerFrame.grid(row=3,column=0,columnspan=3,sticky="ew",pady=10)
         labelFooter = ctk.CTkLabel(footerFrame,text="Made by David Santos")
         labelFooter.pack()
 
@@ -114,7 +155,7 @@ class mainView(ctk.CTkFrame):
         for i in range(len(labelList)):
             labelList[i].grid(row=i,column=0,padx=5,pady=5)
             buttonList[i].grid(row=i,column=1,padx=5,pady=5)
-            buttonList[i].configure(command=lambda: print(labelList[i].cget("text")))
+            buttonList[i].configure(command=self.fillFoodList)
 
 
     #Fill the food list with all the records from the database
@@ -125,7 +166,7 @@ class mainView(ctk.CTkFrame):
         row = 0
         calories = 0
         for result in foodlist:
-            self.foodListTree.insert('',END,values=(result[1],result[2],result[3]))
+            self.foodListTree.insert('',END,values=(result[1],result[2],result[3],result[4],result[5],result[6]))
             row = row + 1
             calories = calories + result[3]
         self.labelTotalCalories.configure(text=calories)
@@ -140,8 +181,14 @@ class mainView(ctk.CTkFrame):
     def addFood(self):
         if self.labelDateSelected.cget("text") != "":
             date = self.labelDateSelected.cget("text").split("/")
+            try: carbs = float(self.inputCarbs.get())
+            except: carbs = 0
+            try: proteins = float(self.inputProteins.get())
+            except: proteins = 0
+            try: fats = float(self.inputFats.get())
+            except: fats= 0
             try:
-                self.master.db.insertFood(date[0],date[1],date[2],self.inputName.get(),float(self.inputCalories.get()))
+                self.master.db.insertFood(date[0],date[1],date[2],self.inputName.get(),float(self.inputCalories.get()),carbs,proteins,fats)
                 self.fillFoodList()
             except: msg.showwarning(title="Data invalid",message="Please enter a name and a valid number for the calories!")
         else: msg.showwarning(title="No date selected",message="You haven't selected a date to edit!")
@@ -153,7 +200,7 @@ class mainView(ctk.CTkFrame):
             for food in selected_items:
                 values = self.foodListTree.item(food)["values"]
                 try:
-                    self.master.db.deleteFood(values[0],values[1],values[2])
+                    self.master.db.deleteFood(values[0],values[1],values[2],values[3],values[4],values[5])
                     self.foodListTree.delete(food)
                 except: print("Error in deleting food from DB")
         else: self.displayLabelMessage("Select a food on the list to remove")
