@@ -17,7 +17,7 @@ class export(ctk.CTkToplevel):
         super().__init__(master)
         self.title("Export")
         self.format = ctk.StringVar(value="Choose..")
-        self.format_list = ["JSON","YAML","CSV"]
+        self.format_list = ["JSON","YAML","Plain Text"]
         labelFormat = ctk.CTkLabel(self,text="Select format:")
         labelFormat.grid(row=0,column=0,padx=10,pady=20)
         selectFormat = ctk.CTkOptionMenu(self,values=self.format_list,variable=self.format)
@@ -61,7 +61,7 @@ class export(ctk.CTkToplevel):
                 with open(filename,"w") as outfile:
                     outfile.write(json_data)
                 self.labelMessage.configure(text=f"Data exported!\n{filename}")
-            except: pass
+            except: print("failed export")
         elif format == "YAML":
             file_types = (('YAML files', '*.yaml'),('All files', '*.*'))
             try:
@@ -69,12 +69,13 @@ class export(ctk.CTkToplevel):
                 with open(filename,"w") as outfile:
                     yaml.dump(data,outfile,indent=4)
                 self.labelMessage.configure(text=f"Data exported!\n{filename}")
-            except: pass
-        elif format == "CSV":
-            file_types = (('CSV files', '*.csv'),('All files', '*.*'))
+            except: print("failed export")
+        elif format == "Plain Text":
+            file_types = (('Text files', '*.txt'),('All files', '*.*'))
             try:
                 filename = fd.asksaveasfilename(title="Choose export location",filetypes=file_types,initialdir=getcwdb())
                 with open(filename,"w") as outfile:
-                    pass
+                    for key in data["dates"]:
+                        outfile.write(str(key)+"\n")
                 self.labelMessage.configure(text=f"Data exported!\n{filename}")
-            except: pass
+            except: print("failed export")
