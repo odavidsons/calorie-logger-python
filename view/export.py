@@ -13,19 +13,22 @@ from os import getcwdb
 
 class export(ctk.CTkToplevel):
 
+    fontLarge = ('default',18,'bold')
+    fontMedium = ('default',14)
+
     def __init__(self,master):
         super().__init__(master)
         self.title("Export")
         self.format = ctk.StringVar(value="Choose..")
         self.format_list = ["JSON","YAML","Plain Text"]
-        labelFormat = ctk.CTkLabel(self,text="Select format:")
-        labelFormat.grid(row=0,column=0,padx=10,pady=20)
-        selectFormat = ctk.CTkOptionMenu(self,values=self.format_list,variable=self.format)
-        selectFormat.grid(row=0,column=1,padx=10)
-        btnExport = ctk.CTkButton(self,text="Export",command=self.exportData)
-        btnExport.grid(row=1,columnspan=2,padx=10,pady=20)
+        labelFormat = ctk.CTkLabel(self,text="Select format:",font=self.fontMedium)
+        labelFormat.grid(row=0,column=0,padx=20,pady=20)
+        selectFormat = ctk.CTkOptionMenu(self,values=self.format_list,variable=self.format,font=self.fontMedium)
+        selectFormat.grid(row=0,column=1,padx=20)
+        btnExport = ctk.CTkButton(self,text="Export",font=self.fontMedium,command=self.exportData)
+        btnExport.grid(row=1,columnspan=2,padx=10,pady=10)
         self.labelMessage = ctk.CTkLabel(self,text="")
-        self.labelMessage.grid(row=2,columnspan=2,padx=10,pady=10)
+        self.labelMessage.grid(row=2,columnspan=2,padx=20,pady=5)
 
     def exportData(self):
         format = self.format.get()
@@ -77,5 +80,5 @@ class export(ctk.CTkToplevel):
                 with open(filename,"w") as outfile:
                     for key in data["dates"]:
                         outfile.write(str(key)+"\n")
-                self.labelMessage.configure(text=f"Data exported!\n{filename}")
+                self.labelMessage.configure(text=f"Data exported!\nPath: {filename}")
             except: print("failed export")

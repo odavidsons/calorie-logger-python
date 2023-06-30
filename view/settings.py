@@ -12,3 +12,6 @@ class settings(ctk.CTkToplevel):
     def __init__(self,master):
         super().__init__(master)
         self.title("Settings")
+        self.geometry("200x200")
+        label = ctk.CTkLabel(self,text="Future feature")
+        label.pack(padx=20,pady=20)

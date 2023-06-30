@@ -27,7 +27,7 @@ class dbfunctions():
             self.conn.commit()
         except: self.conn.rollback()
 
-        query = "CREATE TABLE foods (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_id INTEGER NOT NULL, name TEXT NOT NULL, calories REAL NOT NULL);"
+        query = "CREATE TABLE foods (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_id INTEGER NOT NULL, name TEXT NOT NULL, calories REAL NOT NULL, CONSTRAINT fk_date_id FOREIGN KEY (date_id) REFERENCES dates (id) ON DELETE CASCADE);"
         try:
             self.cursor.execute(query)
             self.conn.commit()
@@ -81,6 +81,16 @@ class dbfunctions():
             self.cursor.execute(query,values)
             self.conn.commit()
             print(f"Inserted food: {date_id},{name},{calories}")
+        except:
+            self.conn.rollback()
+
+    #Delete a date entry
+    def deleteDate(self,id):
+        query = f"DELETE FROM dates WHERE id = '{id}';"
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            print(f"Deleted date: {id}")
         except:
             self.conn.rollback()
 

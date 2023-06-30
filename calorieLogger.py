@@ -17,6 +17,7 @@ class calorieLogger(ctk.CTk):
         super().__init__(*args, **kwargs)
         ctk.set_appearance_mode(self.UIMode)
         self.resizable(True,True)
+        self.title("Calorie Logger")
         self.mainFrame = mainView(self) #Render main app widgets
         self.mainFrame.grid()
         self.connectDB()

@@ -74,8 +74,8 @@ class mainView(ctk.CTkFrame):
         labelDate1.grid(row=0,column=0,padx=5)
         self.labelDateSelected = ctk.CTkLabel(rightFrame,text="")
         self.labelDateSelected.grid(row=0,column=1,padx=5)
-        self.btnClearList = ctk.CTkButton(rightFrame,text="Clear Selection",command=self.clearList)
-        self.btnClearList.grid(row=0,column=2,padx=5,pady=5)
+        self.btnclearSelection = ctk.CTkButton(rightFrame,text="Clear Selection",command=self.clearSelection)
+        self.btnclearSelection.grid(row=0,column=2,padx=5,pady=5)
         self.foodListTree = Treeview(rightFrame,columns=("date_id","name","calories"),show='headings')
         self.foodListTree.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
         self.foodListTree.heading("name",text="Food")
@@ -99,14 +99,22 @@ class mainView(ctk.CTkFrame):
         if date_id != None:
             self.btnAddDate.configure(state="disabled",text="Already registered today")
         datelist = self.master.db.getDates()
+
+        labelList = []
+        buttonList = []
         row = 0
         for result in datelist:
             date = f"{result[1]}/{result[2]}/{result[3]}"
             label = ctk.CTkLabel(self.dateListFrame,text=date)
-            label.grid(row=row,column=0,padx=5,pady=5)
-            btn = ctk.CTkButton(self.dateListFrame,text=f"Select",command=self.fillFoodList)
-            btn.grid(row=row,column=1,padx=5,pady=5)
+            labelList.append(label)
+            btn = ctk.CTkButton(self.dateListFrame,text="Select")
+            buttonList.append(btn)
             row = row + 1
+        
+        for i in range(len(labelList)):
+            labelList[i].grid(row=i,column=0,padx=5,pady=5)
+            buttonList[i].grid(row=i,column=1,padx=5,pady=5)
+            buttonList[i].configure(command=lambda: print(labelList[i].cget("text")))
 
 
     #Fill the food list with all the records from the database
@@ -121,7 +129,7 @@ class mainView(ctk.CTkFrame):
             row = row + 1
             calories = calories + result[3]
         self.labelTotalCalories.configure(text=calories)
-    
+
     #Handle insertion for a date entry
     def addDate(self):
         date = self.labelCurrentDate.cget("text").split("/")
@@ -150,8 +158,14 @@ class mainView(ctk.CTkFrame):
                 except: print("Error in deleting food from DB")
         else: self.displayLabelMessage("Select a food on the list to remove")
 
+    #Handle the date selection
+    def selectDate(self,label):
+        date = label.cget("text").split("/")
+        self.labelDateSelected.configure(text=f"{date[0]}/{date[1]}/{date[2]}")
+        self.fillFoodList()
+
     #Cler the current selection
-    def clearList(self):
+    def clearSelection(self):
         self.labelDateSelected.configure(text="")
         self.foodListTree.delete(*self.foodListTree.get_children()) #Clear the list
         self.labelTotalCalories.configure(text="")
