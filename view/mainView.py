@@ -10,6 +10,7 @@ import datetime
 from tkinter import messagebox as msg
 from tkinter.ttk import Treeview
 from tkinter import END
+import CTkListbox
 #Import app views
 from view.settings import settings
 from view.export import export
@@ -48,8 +49,12 @@ class mainView(ctk.CTkFrame):
         self.labelCurrentDate.grid(row=0,column=1,padx=5)
         self.btnAddDate = ctk.CTkButton(self.leftFrame,text="Register today",command=self.addDate)
         self.btnAddDate.grid(row=0,column=2,padx=5,pady=5)
-        self.dateListFrame = ctk.CTkScrollableFrame(self.leftFrame)
-        self.dateListFrame.grid(row=1,column=0,columnspan=3,padx=10,pady=15,sticky="nsew")
+        self.dateListBox = CTkListbox.CTkListbox(self.leftFrame)
+        self.dateListBox.grid(row=1,columnspan=3,padx=5,pady=5)
+        btnSelectDate = ctk.CTkButton(self.leftFrame,text=">> Select Date >>",font=self.fontMedium,command=self.selectDate)
+        btnSelectDate.grid(row=2,columnspan=3,padx=10,pady=5)
+        btnRemoveDate = ctk.CTkButton(self.leftFrame,text="Remove date",font=self.fontMedium,fg_color="#c21717",hover_color="#9e1919",command=self.removeDate)
+        btnRemoveDate.grid(row=3,columnspan=3,padx=10,pady=5)
 
         #Center options frame
         centerFrame = ctk.CTkFrame(self)
@@ -135,35 +140,26 @@ class mainView(ctk.CTkFrame):
 
     #Fill the date list with all the records from the database
     def fillDateList(self):
+        #Clear the listbox
+        for i in range(self.dateListBox.size()):
+            self.dateListBox.delete(i)
         #Change the state of the register button if the current date already has been inserted
         date = self.labelCurrentDate.cget("text").split("/")
         date_id = self.master.db.getDateId(date[0],date[1],date[2])
         if date_id != None:
             self.btnAddDate.configure(state="disabled",text="Already registered today")
         datelist = self.master.db.getDates()
-
-        labelList = []
-        buttonList = []
         row = 0
         for result in datelist:
             date = f"{result[1]}/{result[2]}/{result[3]}"
-            label = ctk.CTkLabel(self.dateListFrame,text=date)
-            labelList.append(label)
-            btn = ctk.CTkButton(self.dateListFrame,text="Select")
-            buttonList.append(btn)
+            self.dateListBox.insert(row,date)
             row = row + 1
-        
-        for i in range(len(labelList)):
-            labelList[i].grid(row=i,column=0,padx=5,pady=5)
-            buttonList[i].grid(row=i,column=1,padx=5,pady=5)
-            buttonList[i].configure(command=self.fillFoodList)
-
 
     #Fill the food list with all the records from the database
     def fillFoodList(self):
         self.foodListTree.delete(*self.foodListTree.get_children()) #Clear the list
-        self.labelDateSelected.configure(text=f"{self.today.day}/{self.today.month}/{self.today.year}")
-        foodlist = self.master.db.getFoodsByDateId(self.today.day,self.today.month,self.today.year)
+        date = self.labelDateSelected.cget("text").split("/")
+        foodlist = self.master.db.getFoodsByDateId(date[0],date[1],date[2])
         row = 0
         calories = 0
         carbs = 0
@@ -203,6 +199,17 @@ class mainView(ctk.CTkFrame):
             except: msg.showwarning(title="Data invalid",message="Please enter a name and a valid number for the calories!")
         else: msg.showwarning(title="No date selected",message="You haven't selected a date to edit!")
 
+    #Handle deletion for a date entry
+    def removeDate(self):
+        if self.dateListBox.get() != None:
+            confirm = msg.askyesno(title="Remove date",message=f"Are you sure you want to remove this date? ({self.dateListBox.get()})")
+            if confirm:
+                date = self.dateListBox.get().split("/")
+                date_id = self.master.db.getDateId(date[0],date[1],date[2])
+                self.master.db.deleteDate(date_id[0])
+                self.fillDateList()
+        else: print("No date selected")
+
     #Handle deletion for a food entry on the selected date
     def removeFood(self):
         selected_items = self.foodListTree.selection()
@@ -212,6 +219,7 @@ class mainView(ctk.CTkFrame):
                 try:
                     self.master.db.deleteFood(values[0],values[1],values[2],values[3],values[4],values[5])
                     self.foodListTree.delete(food)
+                    self.clearLabelMessage()
                 except: print("Error in deleting food from DB")
         else: self.displayLabelMessage("Select a food on the list to remove")
 
@@ -225,10 +233,12 @@ class mainView(ctk.CTkFrame):
                 chart(carbs[0],proteins[0],fats[0])
 
     #Handle the date selection
-    def selectDate(self,label):
-        date = label.cget("text").split("/")
-        self.labelDateSelected.configure(text=f"{date[0]}/{date[1]}/{date[2]}")
-        self.fillFoodList()
+    def selectDate(self):
+        if self.dateListBox.get() != None:
+            date = self.dateListBox.get().split("/")
+            self.labelDateSelected.configure(text=f"{date[0]}/{date[1]}/{date[2]}")
+            self.fillFoodList()
+        else: print("No date selected")
 
     #Cler the current selection
     def clearSelection(self):
@@ -243,3 +253,7 @@ class mainView(ctk.CTkFrame):
     def displayLabelMessage(self,message):
         self.labelMessage.configure(text=message)
         #self.after(2000,self.labelMessage.configure(text=""))
+
+    #Clear the text on the message label
+    def clearLabelMessage(self):
+        self.labelMessage.configure(text="")
