@@ -13,6 +13,7 @@ from tkinter import END
 #Import app views
 from view.settings import settings
 from view.export import export
+from view.chart import chart
 
 class mainView(ctk.CTkFrame):
 
@@ -123,7 +124,7 @@ class mainView(ctk.CTkFrame):
         self.labelTotalProteins.grid(row=2,column=2,padx=5)
         self.labelTotalFats = ctk.CTkLabel(self.selectedStatsFrame,text="")
         self.labelTotalFats.grid(row=2,column=3,padx=5)
-        btnChart = ctk.CTkButton(self.selectedStatsFrame,text="View chart")
+        btnChart = ctk.CTkButton(self.selectedStatsFrame,text="View chart",command=self.viewChart)
         btnChart.grid(row=3,columnspan=4,padx=10,pady=10)
         self.master.make_dynamic(self.selectedStatsFrame)
 
@@ -175,10 +176,10 @@ class mainView(ctk.CTkFrame):
             carbs = carbs + result[4]
             proteins = proteins + result[5]
             fats = fats + result[6]
-        self.labelTotalCalories.configure(text=f"{calories} Kcal")
-        self.labelTotalCarbs.configure(text=f"{carbs} g")
-        self.labelTotalProteins.configure(text=f"{proteins} g")
-        self.labelTotalFats.configure(text=f"{fats} g")
+        self.labelTotalCalories.configure(text=f"{calories}Kcal")
+        self.labelTotalCarbs.configure(text=f"{carbs}g")
+        self.labelTotalProteins.configure(text=f"{proteins}g")
+        self.labelTotalFats.configure(text=f"{fats}g")
 
     #Handle insertion for a date entry
     def addDate(self):
@@ -213,6 +214,15 @@ class mainView(ctk.CTkFrame):
                     self.foodListTree.delete(food)
                 except: print("Error in deleting food from DB")
         else: self.displayLabelMessage("Select a food on the list to remove")
+
+    #Open a window with a pie chart if there is a date selected
+    def viewChart(self):
+        if self.labelDateSelected.cget("text") != "":
+            carbs = self.labelTotalCarbs.cget("text").split("g")
+            proteins = self.labelTotalProteins.cget("text").split("g")
+            fats = self.labelTotalFats.cget("text").split("g")
+            if carbs[0] != "0" and proteins[0] != "0" and fats[0] != "0":
+                chart(carbs[0],proteins[0],fats[0])
 
     #Handle the date selection
     def selectDate(self,label):
