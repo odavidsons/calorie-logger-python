@@ -1,36 +1,36 @@
+"""
+Author: David Santos
+Repository: https://github.com/odavidsons/calorie-logger-python
+Year: 2023
+
+File imported by main.py. Creates the main view object and handles app initialization.
+"""
 import customtkinter as ctk
 from view.mainView import mainView
 from db.dbfunctions import dbfunctions
 
 class calorieLogger(ctk.CTk):
 
+    UIMode = "dark"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("green")
-        self.mainFrame = mainView(self)
-        self.mainFrame.pack()
-        self.connectDB()
+        ctk.set_appearance_mode(self.UIMode)
         self.resizable(True,True)
-        
+        self.title("Calorie Logger")
+        self.mainFrame = mainView(self) #Render main app widgets
+        self.mainFrame.grid()
+        self.connectDB()
+        self.make_dynamic(self)
+
+    #Start database connection
     def connectDB(self):
         try:
             self.db = dbfunctions()
             print(self.db.databaseStatus())
-            self.fillDateList()
+            self.mainFrame.fillDateList()
         except: pass
 
-    def fillDateList(self):
-        datelist = self.db.getDates()
-        row = 0
-        for result in datelist:
-            date = f"{result[1]}/{result[2]}/{result[3]}"
-            label = ctk.CTkLabel(self.mainFrame.dateListFrame,text=date)
-            label.grid(row=row,column=0)
-            btn = ctk.CTkButton(self.mainFrame.dateListFrame,text=f"Select ({row})")
-            btn.grid(row=row,column=1)
-            row = row + 1
-    
     #Make a window's widgets dynamic when resizing
     def make_dynamic(self,window):
         col_count,row_count = window.grid_size()
@@ -41,8 +41,10 @@ class calorieLogger(ctk.CTk):
         for i in range(col_count):
             window.grid_columnconfigure(i, weight=1)
 
-        for child in window.children.values():
-            try:
-                child.grid_configure(sticky="nsew")
-                self.make_dynamic(child)
-            except: pass
+    def toggleUIMode(self):
+        if self.UIMode == "dark":
+            self.UIMode = "light"
+            ctk.set_appearance_mode(self.UIMode)
+        else:
+            self.UIMode = "dark"
+            ctk.set_appearance_mode(self.UIMode)
