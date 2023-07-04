@@ -27,16 +27,14 @@ class mainView(ctk.CTkFrame):
         #Top menu frame
         optionsFrame = ctk.CTkFrame(self)
         optionsFrame.grid(row=0,column=0,columnspan=3,sticky="nsew")
-        labelTitle = ctk.CTkLabel(optionsFrame,text="Calorie logger",font=self.fontLarge)
-        labelTitle.grid(row=0,column=0,columnspan=4,pady=15)
         self.btnExport = ctk.CTkButton(optionsFrame,text="Export",font=self.fontMedium,command=lambda: export(master))
-        self.btnExport.grid(row=1,column=0,padx=20,pady=10)
+        self.btnExport.grid(row=0,column=0,padx=20,pady=10)
         self.btnSettings = ctk.CTkButton(optionsFrame,text="Settings",font=self.fontMedium,command=lambda: settings(master))
-        self.btnSettings.grid(row=1,column=1,padx=20,pady=10)
+        self.btnSettings.grid(row=0,column=1,padx=20,pady=10)
         self.btnToggleMode = ctk.CTkButton(optionsFrame,text="Toggle Theme",font=self.fontMedium,command=self.master.toggleUIMode)
-        self.btnToggleMode.grid(row=1,column=2,padx=20,pady=10)
+        self.btnToggleMode.grid(row=0,column=2,padx=20,pady=10)
         self.btnExit = ctk.CTkButton(optionsFrame,text="Exit",font=self.fontMedium,command=self.master.quit)
-        self.btnExit.grid(row=1,column=3,padx=20,pady=10)
+        self.btnExit.grid(row=0,column=3,padx=20,pady=10)
         self.master.make_dynamic(optionsFrame)
 
         #Left list frame
@@ -110,7 +108,7 @@ class mainView(ctk.CTkFrame):
         self.foodListTree["displaycolumns"]=("name", "calories","carbs","proteins","fats")
 
         self.selectedStatsFrame = ctk.CTkFrame(rightFrame)
-        self.selectedStatsFrame.grid(row=2,columnspan=3,padx=10,pady=5,sticky="ew")
+        self.selectedStatsFrame.grid(row=2,columnspan=3,padx=10,pady=10,sticky="ew")
         labelTitle1 = ctk.CTkLabel(self.selectedStatsFrame,text="Total Macros",font=self.fontMedium)
         labelTitle1.grid(row=0,columnspan=4,padx=5)
         labelTotal = ctk.CTkLabel(self.selectedStatsFrame,text="Calories")
@@ -240,7 +238,7 @@ class mainView(ctk.CTkFrame):
             self.fillFoodList()
         else: print("No date selected")
 
-    #Cler the current selection
+    #Clear the current selection
     def clearSelection(self):
         self.labelDateSelected.configure(text="")
         self.foodListTree.delete(*self.foodListTree.get_children()) #Clear the list
